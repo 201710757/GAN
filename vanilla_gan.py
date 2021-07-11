@@ -75,7 +75,7 @@ discriminator = Discriminator()
 if cuda:
     generator.cuda()
     discriminator.cuda()
-    adversrial_loss.cuda()
+    adversarial_loss.cuda()
 
 import os
 os.makedirs("./data/mnist", exist_ok=True)
@@ -84,7 +84,7 @@ dataloader = torch.utils.data.DataLoader(
                 "./data/mnist",
                 train=True,
                 download=True,
-                transform=transform.Compose(
+                transform=transforms.Compose(
                         [transforms.Resize(img_size), transforms.ToTensor(), transforms.Normalize([0.5], [0.5])]
                     ),
 
@@ -96,7 +96,7 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=lr, betas=(b1,b2))
 
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
-for epoch in range(n_epochs):
+for epoch in range(n_epoch):
     for i, (imgs, _) in enumerate(dataloader):
         valid = Variable(Tensor(imgs.size(0), 1).fill_(1.0), requires_grad=False)
         fake = Variable(Tensor(imgs.size(0), 1).fill_(0.0), requires_grad=False)
@@ -123,10 +123,10 @@ for epoch in range(n_epochs):
         d_loss.backward()
         optimizer_D.step()
 
-        print("Epoch {}/{} Batch {}/{} | D loss : {}  G loss : {}".format(epoch, n_epochs, i, len(dataloader), d_loss.item(), g_loss.item()))
+        print("Epoch {}/{} Batch {}/{} | D loss : {}  G loss : {}".format(epoch, n_epoch, i, len(dataloader), d_loss.item(), g_loss.item()))
 
         batches_done = epoch * len(discriminator) + i
-        if batches_done % opt.sample_interval == 0:
+        if batches_done % sample_interval == 0:
             save_image(gen_imgs.data[:25], "images/%d.png" % batches_done, nrow=5, normalize=True)
 
 
